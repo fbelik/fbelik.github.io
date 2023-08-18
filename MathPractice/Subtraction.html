@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <script src="p5.min.js"></script>
+    <script src="subtract.js"></script>
+    <style>
+    .slider {
+    -webkit-appearance: none;
+    width: 25%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+
+    .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+  }
+
+    .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+  }
+    </style>
+  </head>
+  <body>
+    <form>
+      <input type="button" onclick="window.location.href = 'Home.html';" value="Back"/><br>
+    </form>
+    <div id="sketch-holder"></div>
+    <form>
+      <input type="text" name="numCards" id="numCards" placeholder="Number of Flashcards"><br>
+      <input type="text" name="low" id="low" placeholder="Smallest Number">
+      <input type="text" name="high" id="high" placeholder="Largest Number"><br>
+      <input type="range" min="200" max="800" value="450" class="slider" id="time">
+      <span>Time: <span id="output"></span></span> <br>
+      <input type="button" value="Submit" onclick="submitValues()">
+    </form>
+    <script>
+      var slider = document.getElementById("time");
+      var output = document.getElementById("output");
+      output.innerHTML = slider.value / 100;
+      slider.oninput = function() {
+        output.innerHTML = this.value / 100;
+      }
+    </script>
+  </body>
+</html>

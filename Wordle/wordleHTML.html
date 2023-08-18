@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script>
+  </head>
+  <body>
+    <script src="wordle.js"></script>
+    <p>Wordle strategy slider</p>
+    <div class="slidecontainer">
+        <input type="range" value="0" min="-3" max="4" step="0.001" class="slider" id="myRange">
+    </div>
+    <input type="button" value="Enter" id="sliderButton">
+    <p>Slider: α = <span id="sliderText"></span></p>
+    <p>Change the value of the slider to change how strongly you value greens over yellows</p>
+    <br>
+    <div id="sketch-holder">
+        <!-- Our sketch will go here! -->
+    </div>
+    <p>Wordle fun facts: (<a href="https://photutorial.com/wordle-statistics/"  target="_blank" rel="noopener noreferrer">Photutorial wordle statistics 2023</a>)</p>
+    <ul>
+        <li>Global average is 4.016 guesses to solve</li>
+        <li>Top country is Sweden with 3.72 guesses to solve</li>
+        <li>The best US city is St. Paul, MN with 3.51 guesses to solve (go MN!)</li>
+        <li>Using information theory (different from here), can average 3.42 guesses to solve</li>
+        <li>Note that city and country results are from twitter, hence may be biased lower</li>
+    </ul>
+    <p>Strategy charts</p>
+    <img src="wordle_strategy_sweep.png" width="45%">
+    <img src="wordle_first_guess.png" width="45%">
+  </body>
+</html>

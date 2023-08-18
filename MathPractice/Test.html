@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script src="p5.min.js"></script>
+    <script src="test.js"></script>
+  </head>
+  <body>
+    <h2>Practice Test</h2>
+    <form>
+      <input type="button" onclick="window.location.href = 'Home.html';" value="Back"/><br>
+    </form>
+    <div id="sketch-holder" style="display: none"></div>
+    <form id='form'>
+      <input type="radio" name="type" id="type1" value="add" checked> Addition<br>
+      <input type="radio" name="type" id="type2" value="subtract"> Subtraction<br>
+      <input type="radio" name="type" id="type3" value="multiply"> Multiplication<br>
+      <input type="radio" name="type" id="type4" value="divide"> Division<br>
+      <p id='title1'>Number of Questions: </p>
+      <input type="number" id="numCards" value=80 min="1"><br>
+      <p id='title2'>Total Time in Minutes: </p>
+      <input type="number" id="time" value=4 min="0.5" step=0.5><br>
+      <p id='title3'>Range of Numbers: </p>
+      <input type="text" name="low" id="low" placeholder="Smallest Number">
+      <input type="text" name="high" id="high" placeholder="Largest Number"><br><br>
+      <input type="button" value="Submit" onclick="submitValues();">
+    </form>
+    <form id='afterTest' style="display:none;">
+      <input type="button"  id='again' value="Again" onclick="repeatValues();">
+      <input type="button" id='different' value="Different Test" onclick="newValues();">
+    </form>
+  </body>
+</html>
