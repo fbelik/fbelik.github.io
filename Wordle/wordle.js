@@ -365,6 +365,7 @@ function keyPressed() {
 }
 
 function mousePressed() {
+    super();
     if (!won) {
         for (var i=0; i<6; i++) {
             for (var j=0; j<5; j++) {
@@ -387,8 +388,6 @@ function mousePressed() {
             }
             for (var j = 0; j < keyboardKeys[i].length; j++) {
                 if (mouseX >= keyIndentx + lpad + (x0 + (dxkey+gap)*j) * sizeScale && mouseX <= keyIndentx + lpad + (x0 + (dxkey+gap)*j + dxkey) * sizeScale && mouseY >= (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i) * sizeScale && mouseY <= (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i + dykey) * sizeScale) {                        dispatchEvent(new KeyboardEvent('keypress', {'key': keyboardKeys[i][j]}));
-                    
-                    console.log(keyboardKeys[i][j]);
                     myKeyPressed((keyboardKeys[i][j]).charCodeAt(0));
                     break;
                 }
