@@ -10,6 +10,8 @@ const dx = 50;
 const y0 = 100;
 const dy = 50;
 const gap = 5;
+const dxkey = 50;
+const dykey = 50;
 
 
 const chars = [];
@@ -48,10 +50,11 @@ window.onload = function () {
     updateSuggestion = true;
 }
 
+var cnv;
 function setup() {
   // put setup code here
   sizeScale = Math.min(2.0, 1.0 * (windowWidth / 1200));
-  var cnv = createCanvas(windowWidth-20, (y0 + (dy+gap)*6 + dy) * sizeScale);
+  cnv = createCanvas(windowWidth-20, (y0 + (dy+gap)*6 + dy) * sizeScale + ((dykey+gap)*3 + dykey) * sizeScale);
 //   var x = (windowWidth - width) / 2;
 //   var p = cnv.position();
 //   cnv.position(x, p.y);
@@ -61,7 +64,7 @@ function setup() {
 
 function windowResized() {
     sizeScale = Math.min(2.0, 1.0 * (windowWidth / 1200));
-    resizeCanvas(windowWidth-20, (y0 + (dy+gap)*6 + dy) * sizeScale);
+    resizeCanvas(windowWidth-20, (y0 + (dy+gap)*6 + dy) * sizeScale + (y0 + (dykey+gap)*3 + dy) * sizeScale);
 }
 
 function word_score(word,word_bank) {
@@ -235,6 +238,8 @@ function updateSuggestions() {
     }
 }
 
+var keyboardKeys = [['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['->','Z','X','C','V','B','N','M','<-']];
+
 function draw() {
   // put drawing code
   background(25, 25, 25);
@@ -258,6 +263,24 @@ function draw() {
         text(chars[i][j], lpad + (18 + x0 + (dx+gap)*j) * sizeScale, (35 + y0 + (dy+gap)*i) * sizeScale);
     }
   }
+  // Draw keyboard
+  //   textSize(18 * sizeScale);
+  var keyIndentx = 0;
+  for (var i=0; i<3; i++) {
+    var j = 0;
+    for (var j=0; j<keyboardKeys[i].length; j++) {
+        if (i > 0) {
+            keyIndentx = dxkey * 1/2 * sizeScale;
+        }
+        else {
+            keyIndentx = 0;
+        }
+        fill(200,200,200);
+        rect(keyIndentx + lpad + (x0 + (dxkey+gap)*j) * sizeScale, (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i) * sizeScale, dxkey * sizeScale, dykey * sizeScale);
+        fill(0,0,0);
+        text(keyboardKeys[i][j], keyIndentx + lpad + (18 + x0 + (dxkey+gap)*j) * sizeScale, (0 + y0 + (dy+gap)*6) * sizeScale + (80 + (dykey+gap)*i) * sizeScale);
+    }
+  }
   if (fullDict.length == 0) {
     readDict();
   }
@@ -277,7 +300,7 @@ function draw() {
   text(suggestions, lpad + 350 * sizeScale, 110 * sizeScale);
 }
 
-function keyPressed() {
+function myKeyPressed(keyCode) {
     if (keyCode >= 65 && keyCode <= 90 && !won) { // Letter
         if (boxOn <= 29 && !waitEnter) {
             const i = floor(boxOn/5);
@@ -289,7 +312,7 @@ function keyPressed() {
             }
         }
     }
-    else if (keyCode === 8) { // BACKSPACE
+    else if (keyCode === 8|| keyCode == 60) { // BACKSPACE
         if (boxOn >= 1) {
             if (boxOn % 5 == 0 && waitEnter == false) {
                 waitEnter = false;
@@ -306,7 +329,7 @@ function keyPressed() {
             won = false;
         }
     }
-    else if (keyCode === 13 && !won) { // ENTER
+    else if (keyCode === 13 || keyCode == 45 && !won) { // ENTER
         if (boxOn % 5 == 0 && boxOn != 0) {
             waitEnter = false;
             updateSuggestion = true;
@@ -337,6 +360,10 @@ function keyPressed() {
     }
 }
 
+function keyPressed() {
+    myKeyPressed(keyCode);
+}
+
 function mousePressed() {
     if (!won) {
         for (var i=0; i<6; i++) {
@@ -346,6 +373,23 @@ function mousePressed() {
                         // Change color
                         states[i][j] = (states[i][j] + 1) % 3;
                     }
+                    break;
+                }
+            }
+        }
+        var keyIndentx = 0;
+        for (var i = 0; i < 3; i++) {
+            if (i > 0) {
+                keyIndentx = dxkey * 1/2 * sizeScale;
+            }
+            else {
+                keyIndentx = 0;
+            }
+            for (var j = 0; j < keyboardKeys[i].length; j++) {
+                if (mouseX >= keyIndentx + lpad + (x0 + (dxkey+gap)*j) * sizeScale && mouseX <= keyIndentx + lpad + (x0 + (dxkey+gap)*j + dxkey) * sizeScale && mouseY >= (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i) * sizeScale && mouseY <= (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i + dykey) * sizeScale) {                        dispatchEvent(new KeyboardEvent('keypress', {'key': keyboardKeys[i][j]}));
+                    
+                    console.log(keyboardKeys[i][j]);
+                    myKeyPressed((keyboardKeys[i][j]).charCodeAt(0));
                     break;
                 }
             }
