@@ -23,10 +23,19 @@
               <p>My research interests interests include mathematical modeling, scientific computing, numerical methods, and differential equations. Below are some of the projects I am currently working on and have worked on in the past.</p>
             </article>
             <header>
+                <h2>Model Order Reduction</h2>
+              </header>
+              <article>
+                <p><img src="images/rbm_ex.svg" style="margin:10px;float:right;width:400px;">Advised by Dr. Akil Narayan, I am studying model order reduction techniques for various problems, typically arising from differential equations. Concurrently, I am developing an open-source Julia package, <a href="https://github.com/fbelik/ModelOrderReductionToolkit.jl" target="_blank" rel="noopener noreferrer">ModelOrderReductionToolkit.jl</a>, to provide a toolkit of methods for performing model order reduction. The package currently implements a weak greedy method for projecting parametrized, linear problems onto a reduced basis. I am interested in implementing methods for time dependent problems, such as LTI ODE systems, and in the longer term, I am interested in investigating nonlinear model order reduction techniques for problems which projection onto a linear subspace performs poorly. </p>
+                <p>To install the package locally, open Julia and run the commands</p>
+                <p style="font-family:'Lucida Console', monospace"><font color="green"> julia> </font> Using Pkg</p> 
+                <p style="font-family:'Lucida Console', monospace"><font color="green"> julia> </font> Pkg.add("ModelOrderReductionToolkit")</p> 
+              </article>
+            <header>
               <h2>Blood Conductivity Modeling</h2>
             </header>
             <article>
-              <p>In collaboration with Dr. Christel Hohenegger, Dr. Braxton Osting, Dr. Benjamin Sanchez, Tyler Schuesler, and Henry Crandall, we are studying a blood flow model that takes as input blood pressure and several other physiological parameters, and outputs fluid velocity, arterial wall displacement, shear stress, and electrical conductivity of the artery. We are interested in developing this model such that it can match real life skin-level measurements of electrical impedance so that we can understand the link between conductivity and blood pressure.</p>
+              <p><img src="images/lsa_fluids.png" style="margin:10px;float:right;width:400px;">In collaboration with Dr. Christel Hohenegger, Dr. Braxton Osting, Dr. Benjamin Sanchez, Tyler Schuesler, and Henry Crandall, we are studying a blood flow model that takes as input blood pressure and several other physiological parameters, and outputs fluid velocity, arterial wall displacement, shear stress, and electrical conductivity of the artery. We are interested in developing this model such that it can match real life skin-level measurements of electrical impedance so that we can understand the link between conductivity and blood pressure. The model couples linearized axis-symmetric Navier Stokes equations to the motion of an elastic wall with an assumption of periodic solutions to derive analytic expressions for axial blood velocity, radial blood velocity, and artery wall displacements anywhere in the artery. These solutions are used to solve for shear stresses in the artery which cause deformation and (dis)orientation of the red blood cells, which impact the bulk conductivity of the artery. Finally, the bulk conductivity along with the change in artery radius over time is used to compute a skin-level resistance measurement. Additionally, we are working to model propagations of flow and pressure in the arteries. With all of these pieces, we can tie upper-arm, brachial, blood pressures, to conductivity and resistance at the wrist.</p>  
             </article>
             <header>
               <h2>Modeling Closed Vortices as Self-Avoiding Polygons</h2>
