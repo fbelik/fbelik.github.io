@@ -195,7 +195,7 @@ function remove_from_list(word,res,word_list) {
                         checkOthers = true;
                     }
                 }
-                if (checkOthers) {
+                if (word[i] == other_word[i] || checkOthers) {
                     keep = false;
                     break;
                 }
