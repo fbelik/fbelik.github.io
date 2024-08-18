@@ -8,16 +8,24 @@
   </head>
   <body>
     <header>
+    <select class="theme-select", name="theme-select" id="theme-select">
+        <option value="purple">Purple</option>
+        <option value="red">Red</option>
+        <option value="gold">Gold</option>
+        <option value="blue">Blue</option>
+        </select>
+        <script src="theme.js"></script>
       <h1>Filip Bělík</h1>
       <nav>
         <ul>
-          <li><a href="index.html", class="header_link">Home</a></li>
-          <li><a href="research.html", class="header_link">Research</a></li>
-          <li><a href="teaching.html", class="header_link">Teaching and Course Notes</a></li>
+          <li><button id="page0button" class="header_link">Home</button></li>
+          <li><button id="page1button" class="header_link">Research</button></li>
+          <li><button id="page2button" class="header_link">Teaching and Course Notes</button></li>
         </ul>
       </nav>
     </header>
     <main>
+    <div id="page0">
       <section id="about">
         <img src="images/capital.jpg", alt="Capital", class="capital">
         <header>
@@ -26,7 +34,7 @@
         <article>
           <img src="images/headshot_8_22.jpg", alt="A picture of me", class="self">
           <img src="images/IMG_8959.jpg", alt="Snowboarding", class="snowboard">
-          <p>My name is Filip Bělík and I am a PhD student at the University of Utah studying Applied Mathematics with an intended graduation of May 2027. Outside of my studies, I enjoy spending time outdoors including running, walking, hiking, playing tennis, biking, or snowboarding. I also enjoy music, board games, and coding in the Julia programming language. </p>
+          <p>My name is Filip Bělík and I am a PhD student at the University of Utah studying Applied Mathematics with an intended graduation of May 2027. I am generally interested in computational mathematics, scientific computing, and modeling; my current projects include parameteric model order reduction, blood flow modeling, methods for Carathéodory pruning, and uncertainty quantification for decision-based models. Outside of my studies, I enjoy spending time outdoors including running, walking, hiking, playing tennis, biking, or snowboarding. I also enjoy music, board games, and coding in the Julia programming language. </p>
         </article>
       </section>
       <section id="contact">
@@ -62,6 +70,127 @@
             <p>Having trouble with the <a href="Wordle/wordleHTML.html" target="_blank" rel="noopener noreferrer">wordle</a>?</p>
         </article>
       </section>
+    </div>
+    <div id="page1" style="display:none">
+        <section>
+            <article>
+                <a id=mor></a><header>
+                    <h2>Parametric Model Order Reduction (PMOR)</h2>
+                    </header>
+                    <img src="images/rbm_ex.svg" style="margin:20px;float:right;height:260px;">
+                <ul>
+                    <li>Study of PMOR methods for linear stationary and nonstationary parametric problems. </li>
+                    <li>Implementation of proper orthogonal decomposition, strong greedy, and weak greedy methods for stationary parametric problems.</li>
+                    <li>Implementation of balanced truncation and RB method for linear time-invariant dynamical systems.</li>
+                    <li>Open source package development of Julia package <a href="https://github.com/fbelik/ModelOrderReductionToolkit.jl" target="_blank" rel="noopener noreferrer">ModelOrderReductionToolkit.jl</a> with <a href="https://fbelik.github.io/ModelOrderReductionToolkit.jl/" target="_blank" rel="noopener noreferrer">documentation</a>.</li>
+                    <li>Goal of expanding to nonlinear and transport dominated problems.</li>
+                    <li>Advised by Dr. Akil Narayan (U of Utah Scientific Computing and Imaging Institute (SCI) and Mathematics), collaboration with Dr. Yanlai Chen (UMass Mathematics).</li>
+                </ul>
+            </article>
+            <article>
+                <a id=fluids></a><header><h2>Blood Flow Modeling for Conductivity and UQ</header></h2>
+                <img src="images/vzvr1_anim.gif" style="margin:20px;float:right;height:260px;">
+                <ul>
+                    <li>Analytical modeling of arterial blood flow and wall displacement.</li>
+                    <li>Relate blood shear-stresses to red blood cell orientation and deformation</li>
+                    <li>Use of electrical theory on ellipsiods and Maxwell-Fricke theory to compute an averaged bulk conductivity in the artery.</li>
+                    <li>Goal of better understanding relationship between blood pressure and blood-driven electrical properties at the wrist.</li>
+                    <li>Work to understand impacts of various parameters and nondimensional constants through local and (Sobol-based) global sensitivity analyses.</li>
+                    <li>Also working to model and understand propagation of pressure waves through an arterial tree along with required boundary conditions to cause peaking seen in wrist blood pressures.</li>
+                    <li>Advised by Dr. Christel Hohenegger (U of Utah), collaboration with Henry Crandall and Dr. Benjamin Sanchez (U of Utah Electrical Engineering) and Tyler Schuessler and Dr. Braxton Osting (U of Utah Mathematics).</li>
+                </ul>
+            </article>
+            <article>
+                <a id=caratheodory></a><header><h2>Carathéodory Pruning</h2></header>
+                <img src="images/caratheodory.png" style="margin:20px;float:right;height:250px;">
+                <ul>
+                    <li>Theorem about minimum number of points in a d-dimensional space required to enclose another point.</li>
+                    <li>Useful for quadrature and MOR applications where we wish to form a non-negative linear combination of a few points to meet some target.</li>
+                    <li>Implementation of various QR-based methods for Carathéodory pruning.</li>
+                    <li>Open source package development of (to be released) Julia package <a href="https://github.com/fbelik/CaratheodoryPruning.jl" target="_blank" rel="noopener noreferrer">CaratheodoryPruning.jl</a> with <a href="https://fbelik.github.io/CaratheodoryPruning.jl/dev/" target="_blank" rel="noopener noreferrer">documentation</a>.</li>
+                    <li>Discussion of complexity of various algorithms.</li>
+                    <li>Advised by Dr. Akil Narayan (U of Utah SCI and Mathematics), collaboration with Dr. Jesse Chan (Rice Computational & Applied Mathematics).</li>
+                </ul>
+            </article>
+            <article>
+                <a id=saps></a><header><h2>Modeling Closed Vortices as Self-Avoiding Polygons (Undergrad Honors Project)</h2></header>
+                <img src="images/length34max.png" style="margin:20px;float:right;height:250px;">
+                <ul>
+                    <li>Extend on former work by modeling closed-loop vortices, such as dolphin bubble rings or smoke rings, as self-avoiding polygons (SAPs) in the cubic lattice.</li>
+                    <li>Use of a discrete approximation of an integral form of kinetic energy to study the maximum, minumum, and average energies of different length configurations.</li>
+                    <li>Implemented sets of transformations for use in Metropolis Markov Chain Monte-Carlo methods for sampling SAPs of longer lengths.</li>
+                    <li>Approximated average energies across various statistical temperatures.</li>
+                    <li>Discovered interesting and nonintuitive pattern of high-energy configurations.</li>
+                    <li>Our results suggested that the model applied to closed-loop vortices could be helpful in finding near minimum energy open vortices and that sampling from closed vortices in the cubiclattice may be trickier than open vortices for high statistical temperature.</li>
+                    <li><a href="files/SAPPres.pdf" target="_blank" rel="noopener noreferrer">Here</a> is my honor's thesis presentation which was advised by Dr Pavel Bělík (Augsburg University Mathematics) and Dr. Thomas LoFaro (Gustavus Adolphus College Mathematics).</li>
+                </ul>
+            </article>
+            <article>
+                <a id=saps></a><header><h2>Age Informed Modeling of Carbon Sequestration in Forests (2022 MCM/ICM)</h2></header>
+                <ul>
+                    <li>We developed a discrete age-structured model that tracks the number of trees over time subject to planting and harvesting.</li>
+                    <li>Tracked the number of carbon sequestered (stored) by trees and by harvested wood products over time to understand the climate impact of different amounts of harvesting.</li>
+                    <li>Implemented sets of transformations for use in Metropolis Markov Chain Monte-Carlo methods for sampling SAPs of longer lengths.</li>
+                    <li>Approximated average energies across various statistical temperatures.</li>
+                    <li>We use this model to understand strategies for harvesting and planting cycles that help to try to optimize the amount of carbon sequestration.</li>
+                    <li>Collaboration with Sophia Nelson (Northwestern Engineering Sciences & Applied Mathematics) and Abigayle Paulson.</li>
+                    <li><a href="files/2022_MCM_ICM_Submission.pdf" target="_blank" rel="noopener noreferrer">Here</a> is our submission.</li>
+                </ul>
+            </article>
+            <article>
+                <a id=saps></a><header><h2>Port-and-Sweep Solitaire Army Problem</h2></header>
+                <img src="images/solitaire.jpg" style="margin:20px;float:right;height:250px;">
+                <ul>
+                    <li>Peg solitaire is a puzzle game with extensive mathematical research and literature revealing connections to modular 3 invariants, the Fibonacci numbers, the golden ratio, and more.</li>
+                    <li><a href="http://homepages.gac.edu/~jsiehler/Articles/port-and-sweep-article.pdf" target="_blank" rel="noopener noreferrer">Port-and-Sweep Solitaire</a> (PaSS) was created in 2010 and differs from peg solitaire in the number of pegs or counters that can be on a single space and the type of moves available to the player.</li>
+                    <li>The one-dimensional army problem involves working with configurations of pegs and using valid solitaire moves in the proper order to advance the army of pegs as far to the left of its starting position as possible.</li>
+                    <li>With the use of a non-increasing board value function, deduction, and linear algebra, we present a definite upper-bound on the advances of PaSS armies, minimal configurations of armies that progress as far as has been shown possible, and a solution to the PaSS army problem given assumptions that match all current army advances.</li>
+                    <li>Advised by Dr. Jacob Siehler (Gustavus Adolphus College Mathematics).</li>
+                </ul>
+            </article>
+            <article>
+                <a id=saps></a><header><h2>Propagation of Health-Related Habits on Twitter</h2></header>
+                <img src="images/twitter.png" style="margin:20px;float:right;height:250px;">
+                <ul>
+                    <li>Continuation of works trying to quantify social selection and social influence in online relationships.</li>
+                    <li>Worked to answer question: How do an individual's exercise habits on Twitter influence that user's followers.</li>
+                    <li>Implemented and compared various machine learning algorithms towards text classification (scikit learn Naive-Bayes, Decision Trees, Random Forests, Neural Networks) to identify tweets related to exercise.</li>
+                    <li>Advised by Dr. Louis Yu (Gustavus Adolphus College Computer Science) and work with Jeffery Engelhardt (Gustavus Adolphus College Computer Science).</li>
+                </ul>
+            </article>
+        </section>
+    </div>
+    <div id="page2" style="display:none">
+        <section id="teaching">
+            <header>
+              <h2>Teaching</h2>
+            </header>
+            <article>
+              <ul>
+                <li><a href="files/syllabus_4600_S23.pdf" target="_blank" rel="noopener noreferrer">MATH 4600</a> Mathematics in Medicine Lab Instructor, Utah, January 2023 - May 2023</li>
+                <li>Mathematics and Computer Science Tutor/Grader/Teacher's Assistant, Gustavus, February 2019 - May 2022</li>
+              </ul>
+            </article>
+        </section>
+        <section id="coursenotes">
+            <header>
+              <h2>Course Notes</h2>
+            </header>
+            <article>
+              <ul>
+                <li><a href="notes/pdes_review.pdf" target="_blank" rel="noopener noreferrer">PDEs</a>: Course review, Dr. William Feldman, Spring 2024</li>
+                <li><a href="notes/stat_inference_notes.pdf" target="_blank" rel="noopener noreferrer">Statistical Inference</a>: Course notes, Dr. Jyothsna Sainath, Fall 2023</li>
+                <li><a href="notes/math_ds_notes.pdf" target="_blank" rel="noopener noreferrer">Mathematics of Data Science</a>: Course notes, Dr. Bao Wang, Fall 2023</li>
+                <li><a href="notes/linear_models_notes.pdf" target="_blank" rel="noopener noreferrer">Linear Models</a>: Course notes, Dr. Lajos Horvath, Fall 2023</li>
+                <li><a href="notes/numl_pdes_notes.pdf" target="_blank" rel="noopener noreferrer">Numerical PDEs</a>: Course notes, Dr. Akil Narayan, Spring 2023</li>
+                <li><a href="notes/bifurc_theory_notes.pdf" target="_blank" rel="noopener noreferrer">Bifurcation Theory</a>: Course notes, Dr. James Keener, Spring 2023</li>
+                <li><a href="notes/Numerical_Methods_I_Review.pdf" target="_blank" rel="noopener noreferrer">Numerical Linear Algebra</a>: Course review, Dr. Aaron Fogelson, Fall 2022</li>
+                <li><a href="notes/Functional_Analysis_Review.pdf" target="_blank" rel="noopener noreferrer">Functional Analysis</a>: Course review, Dr. Tom Alberts, Fall 2022</li>
+              </ul>
+            </article>
+        </section>
+    </div>
+    <script src="pages.js"></script>
     </main>
     <footer>
       <p></p>
