@@ -186,7 +186,6 @@ body {
     background: var(--section-bg);
     color: var(--text-color);
     margin: 0 auto;
-    max-width: 1200px;
     padding: clamp(24px, 4vw, 52px);
   }
 
@@ -222,14 +221,12 @@ body {
     font-size: clamp(30px, 4vw, 48px);
     line-height: 1.08;
     margin: 0 0 18px;
-    max-width: 800px;
   }
 
   .home-hero-content > p:not(.eyebrow) {
     font-size: 18px;
     line-height: 1.65;
     margin: 0;
-    max-width: 760px;
   }
 
   .home-actions,
@@ -450,7 +447,6 @@ body {
   .home-personal > div > p:not(.eyebrow) {
     line-height: 1.6;
     margin: 12px 0 0;
-    max-width: 760px;
   }
 
   @media (max-width: 760px) {
@@ -751,10 +747,6 @@ body {
     display: inline-block;
     font-size: 14px;
     margin-top: 5px;
-  }
-
-  .notes-intro {
-    max-width: 780px;
   }
 
   .notes-grid {
