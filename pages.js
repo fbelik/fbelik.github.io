@@ -1,4 +1,14 @@
 const pageNames = ["home", "research", "teaching"];
+const sectionPages = {
+    mor: "research",
+    fluids: "research",
+    caratheodory: "research",
+    saps34: "research",
+    mcmicm: "research",
+    pass: "research",
+    twitter: "research",
+    coursenotes: "teaching"
+};
 
 const buttons = pageNames.map((_, i) =>
     document.getElementById(`page${i}button`)
@@ -26,21 +36,44 @@ function showPage(pageName) {
     });
 }
 
+function showRoute(route) {
+    const pageName = pageNames.includes(route) ? route : sectionPages[route];
+    showPage(pageName || "home");
+
+    window.setTimeout(() => {
+        if (sectionPages[route]) {
+            document.getElementById(route)?.scrollIntoView({
+                behavior: "auto",
+                block: "start",
+                inline: "nearest"
+            });
+        } else {
+            window.scrollTo(0, 0);
+        }
+    }, 50);
+}
+
 buttons.forEach((button, index) => {
     button.addEventListener("click", () => {
-        window.location.hash = pageNames[index];
+        const pageName = pageNames[index];
+
+        if (window.location.hash === `#${pageName}`) {
+            showRoute(pageName);
+        } else {
+            window.location.hash = pageName;
+        }
     });
 });
 
 window.addEventListener("hashchange", () => {
-    showPage(window.location.hash.slice(1));
+    showRoute(window.location.hash.slice(1));
 });
 
-const initialPage = window.location.hash.slice(1);
+const initialRoute = window.location.hash.slice(1);
 
-if (pageNames.includes(initialPage)) {
-    showPage(initialPage);
+if (pageNames.includes(initialRoute) || sectionPages[initialRoute]) {
+    showRoute(initialRoute);
 } else {
     history.replaceState(null, "", "#home");
-    showPage("home");
+    showRoute("home");
 }
