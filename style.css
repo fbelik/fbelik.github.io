@@ -61,6 +61,12 @@ body {
     padding: 0;
     
   }
+
+  header nav button[aria-current="page"] {
+    background-color: var(--header-hover-color);
+    font-weight: bold;
+    border-left: 5px solid currentColor;
+  }
   
   header nav button{
     display: block;
@@ -78,6 +84,11 @@ body {
   
   header nav button:hover {
     background-color: var(--header-hover-color);
+  }
+
+  header nav button:focus-visible {
+    outline: 3px solid var(--link-color);
+    outline-offset: 3px;
   }
 
   header nav hr {

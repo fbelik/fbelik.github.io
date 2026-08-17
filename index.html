@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Filip Bělík's Webpage</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <!-- <link rel="icon" type="image/png" href="headshot_8_22.jpg"/> -->
   </head>
   <body>
     <header>
@@ -15,12 +15,14 @@
         <option value="blue">Blue</option>
         </select>
         <script src="theme.js"></script>
-      <h1>Filip Bělík</h1>
+      <p>
+        <span style="font-weight: bold; font-size: 32px; margin-right: 15px;">Filip Bělík</span> <span style="font-weight: bold; font-size: 18px">Mathematics PhD Candidate at the University of Utah</span>  
+      </p>
       <nav>
         <ul>
-          <li><button id="page0button" class="header_link">Home</button></li>
-          <li><button id="page1button" class="header_link">Research</button></li>
-          <li><button id="page2button" class="header_link">Teaching and Course Notes</button></li>
+          <li><button id="page0button" class="header_link" aria-current="page" aria-controls="page0">Home</button></li>
+          <li><button id="page1button" class="header_link" aria-controls="page1">Research</button></li>
+          <li><button id="page2button" class="header_link" aria-controls="page2">Teaching and Course Notes</button></li>
         </ul>
       </nav>
     </header>
@@ -34,7 +36,7 @@
         <article>
           <img src="images/headshot_8_22.jpg", alt="A picture of me", class="self">
           <img src="images/IMG_8959.jpg", alt="Snowboarding", class="snowboard">
-          <p>My name is Filip Bělík and I am a PhD student at the University of Utah studying Applied Mathematics with an intended graduation of May 2027. I am generally interested in computational mathematics, scientific computing, and modeling; my current projects include parameteric model order reduction, blood flow modeling, methods for Carathéodory pruning, and uncertainty quantification for decision-based models. Outside of my studies, I enjoy spending time outdoors including running, walking, hiking, playing tennis, biking, or snowboarding. I also enjoy music, board games, and coding in the Julia programming language. </p>
+          <p>My name is Filip Bělík and I am a PhD student at the University of Utah studying Applied Mathematics with an intended graduation of May 2027. I am generally interested in computational mathematics, scientific computing, and modeling; my current projects include parametric model order reduction, blood flow modeling, methods for Carathéodory pruning, and uncertainty quantification for decision-based models. Outside of my studies, I enjoy spending time outdoors including running, walking, hiking, playing tennis, biking, or snowboarding. I also enjoy music, board games, and coding in the Julia programming language. </p>
         </article>
       </section>
       <section id="contact">
@@ -48,6 +50,7 @@
             <li>My <a href="files/Filip_CV.pdf" target="_blank" rel="noopener noreferrer">CV</a></li>
             <li>My <a href="https://www.linkedin.com/in/filipbelik/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
             <li>My <a href="https://github.com/fbelik" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li>My <a href="https://scholar.google.com/citations?user=A2wlSLMAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
           </ul>
         </article>
       </section>
@@ -71,7 +74,6 @@
             <li>Crandall, H., Schuessler, T., Bělík, F. et al. (2026). Cuffless hemodynamic monitoring with physics-informed machine learning models. [<a href="https://www.nature.com/articles/s41467-026-72693-1" target="_blank">Nature Communications</a> / <a href="https://arxiv.org/abs/2601.00081" target="_blank">arXiv</a>]</li>
             <li>Filip Bělík, Yanlai Chen, & Akil Narayan (2025). Greedy Rational Approximation for Frequency-Domain Model Reduction of Parametric LTI Systems. [<a href="https://arxiv.org/abs/2512.23814" target="_blank">arXiv</a>]</li>
             <li>Filip Bělík, Jesse Chan, & Akil Narayan (2025). Efficient and Robust Carathéodory-Steinitz Pruning of Positive Discrete Measures. [<a href="https://arxiv.org/abs/2510.14916" target="_blank">arXiv</a>]</li>
-            <li>Filip Bělík, Ha Le, & Jacob Siehler (2020). One-dimenensional Port-and-Sweep Solitaire Armies. [<a href="https://hvrlxy.github.io/assets/pdfs/One_dimensional_Port_and_Sweep_Solitaire_Armies__Copy_.pdf" target="_blank">PDF</a>]</li>
           </ol>
         </article>
       </section>
@@ -107,7 +109,7 @@
                 <ul>
                     <li>Analytical modeling of arterial blood flow and wall displacement.</li>
                     <li>Relate blood shear-stresses to red blood cell orientation and deformation</li>
-                    <li>Use of electrical theory on ellipsiods and Maxwell-Fricke theory to compute an averaged bulk conductivity in the artery.</li>
+                    <li>Use of electrical theory on ellipsoids and Maxwell-Fricke theory to compute an averaged bulk conductivity in the artery.</li>
                     <li>Goal of better understanding relationship between blood pressure and blood-driven electrical properties at the wrist.</li>
                     <li>Work to understand impacts of various parameters and nondimensional constants through local and (Sobol-based) global sensitivity analyses.</li>
                     <li>Also working to model and understand propagation of pressure waves through an arterial tree along with required boundary conditions to cause peaking seen in wrist blood pressures.</li>
@@ -127,43 +129,50 @@
                 </ul>
             </article>
             <article>
-                <a id=saps></a><header><h2>Modeling Closed Vortices as Self-Avoiding Polygons (Undergrad Honors Project)</h2></header>
+                <a id="saps34"></a><header><h2>Modeling Closed Vortices as Self-Avoiding Polygons (Undergrad Honors Project)</h2></header>
                 <img src="images/length34max.png" style="margin:20px;float:right;height:250px;">
                 <ul>
                     <li>Extend on former work by modeling closed-loop vortices, such as dolphin bubble rings or smoke rings, as self-avoiding polygons (SAPs) in the cubic lattice.</li>
-                    <li>Use of a discrete approximation of an integral form of kinetic energy to study the maximum, minumum, and average energies of different length configurations.</li>
+                    <li>Use of a discrete approximation of an integral form of kinetic energy to study the maximum, minimum, and average energies of different length configurations.</li>
                     <li>Implemented sets of transformations for use in Metropolis Markov Chain Monte-Carlo methods for sampling SAPs of longer lengths.</li>
                     <li>Approximated average energies across various statistical temperatures.</li>
                     <li>Discovered interesting and nonintuitive pattern of high-energy configurations.</li>
-                    <li>Our results suggested that the model applied to closed-loop vortices could be helpful in finding near minimum energy open vortices and that sampling from closed vortices in the cubiclattice may be trickier than open vortices for high statistical temperature.</li>
-                    <li><a href="files/SAPPres.pdf" target="_blank" rel="noopener noreferrer">Here</a> is my honor's thesis presentation which was advised by Dr Pavel Bělík (Augsburg University Mathematics) and Dr. Thomas LoFaro (Gustavus Adolphus College Mathematics).</li>
+                    <li>Our results suggested that the model applied to closed-loop vortices could be helpful in finding near minimum energy open vortices and that sampling from closed vortices in the cubic lattice may be trickier than open vortices for high statistical temperature.</li>
+                    <li><a href="files/SAPPres.pdf" target="_blank" rel="noopener noreferrer">Here</a> is my honors thesis presentation which was advised by Dr Pavel Bělík (Augsburg University Mathematics) and Dr. Thomas LoFaro (Gustavus Adolphus College Mathematics).</li>
                 </ul>
             </article>
             <article>
-                <a id=saps></a><header><h2>Age Informed Modeling of Carbon Sequestration in Forests (2022 MCM/ICM)</h2></header>
+                <a id="mcmicm"></a><header><h2>Age Informed Modeling of Carbon Sequestration in Forests (2022 MCM/ICM)</h2></header>
                 <ul>
                     <li>We developed a discrete age-structured model that tracks the number of trees over time subject to planting and harvesting.</li>
                     <li>Tracked the number of carbon sequestered (stored) by trees and by harvested wood products over time to understand the climate impact of different amounts of harvesting.</li>
-                    <li>Implemented sets of transformations for use in Metropolis Markov Chain Monte-Carlo methods for sampling SAPs of longer lengths.</li>
-                    <li>Approximated average energies across various statistical temperatures.</li>
                     <li>We use this model to understand strategies for harvesting and planting cycles that help to try to optimize the amount of carbon sequestration.</li>
                     <li>Collaboration with Sophia Nelson (Northwestern Engineering Sciences & Applied Mathematics) and Abigayle Paulson.</li>
                     <li><a href="files/2022_MCM_ICM_Submission.pdf" target="_blank" rel="noopener noreferrer">Here</a> is our submission.</li>
                 </ul>
             </article>
             <article>
-                <a id=saps></a><header><h2>Port-and-Sweep Solitaire Army Problem</h2></header>
+                <a id="pass"></a><header><h2>Port-and-Sweep Solitaire Army Problem</h2></header>
                 <img src="images/solitaire.jpg" style="margin:20px;float:right;height:250px;">
                 <ul>
-                    <li>Peg solitaire is a puzzle game with extensive mathematical research and literature revealing connections to modular 3 invariants, the Fibonacci numbers, the golden ratio, and more.</li>
-                    <li><a href="http://homepages.gac.edu/~jsiehler/Articles/port-and-sweep-article.pdf" target="_blank" rel="noopener noreferrer">Port-and-Sweep Solitaire</a> (PaSS) was created in 2010 and differs from peg solitaire in the number of pegs or counters that can be on a single space and the type of moves available to the player.</li>
-                    <li>The one-dimensional army problem involves working with configurations of pegs and using valid solitaire moves in the proper order to advance the army of pegs as far to the left of its starting position as possible.</li>
-                    <li>With the use of a non-increasing board value function, deduction, and linear algebra, we present a definite upper-bound on the advances of PaSS armies, minimal configurations of armies that progress as far as has been shown possible, and a solution to the PaSS army problem given assumptions that match all current army advances.</li>
+                    <li>Peg solitaire is a puzzle game with extensive mathematical research and literature revealing connections to
+                        modular 3 invariants, the Fibonacci numbers, the golden ratio, and more.</li>
+                    <li><a href="http://homepages.gac.edu/~jsiehler/Articles/port-and-sweep-article.pdf" target="_blank"
+                            rel="noopener noreferrer">Port-and-Sweep Solitaire</a> (PaSS) was created in 2010 and differs from peg
+                        solitaire in the number of pegs or counters that can be on a single space and the type of moves available to the
+                        player.</li>
+                    <li>The one-dimensional army problem involves working with configurations of pegs and using valid solitaire moves in
+                        the proper order to advance the army of pegs as far to the left of its starting position as possible.</li>
+                    <li>With the use of a non-increasing board value function, deduction, and linear algebra, we present a definite
+                        upper-bound on the advances of PaSS armies, minimal configurations of armies that progress as far as has been
+                        shown possible, and a solution to the PaSS army problem given assumptions that match all current army advances.
+                    </li>
                     <li>Advised by Dr. Jacob Siehler (Gustavus Adolphus College Mathematics).</li>
+                    y=\frac{m+1}{t+\left(1-t\right)\left(m+1\right)}
                 </ul>
             </article>
             <article>
-                <a id=saps></a><header><h2>Propagation of Health-Related Habits on Twitter</h2></header>
+                <a id="twitter"></a><header><h2>Propagation of Health-Related Habits on Twitter</h2></header>
                 <img src="images/twitter.png" style="margin:20px;float:right;height:250px;">
                 <ul>
                     <li>Continuation of works trying to quantify social selection and social influence in online relationships.</li>
