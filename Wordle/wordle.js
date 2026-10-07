@@ -1,10 +1,11 @@
 var sizeScale = 1.0;
+var keyboardSizeScale = 1.0;
 
 var boxOn = 0;
 var waitEnter = false;
 var updateSuggestion = true;
 var won = false;
-const lpad = 20;
+const lpad = 0;
 const x0 = 50;
 const dx = 50;
 const y0 = 100;
@@ -25,19 +26,39 @@ for (var i=0; i<6; i++) {
     }
 }
 
-var suggestions = "";
 var alpha_value = 2.8624;
 
 var fullDict = [];
+var extendedDict = [];
+var extendedDictState = "loading";
+const EXTENDED_DICT_THRESHOLD = 1000;
 
 var slider;
 var output;
 var button;
+var solverMode;
+var heuristicControls;
+var gameStatus;
+var suggestionHeading;
+var suggestionList;
+var remainingWords;
+var useExtendedDict;
+var extendedDictStatus;
+var resetButton;
 
 window.onload = function () {
     slider = document.getElementById("myRange");
     output = document.getElementById("sliderText");
     button = document.getElementById("sliderButton");
+    solverMode = document.getElementById("solverMode");
+    heuristicControls = document.getElementById("heuristicControls");
+    gameStatus = document.getElementById("gameStatus");
+    suggestionHeading = document.getElementById("suggestionHeading");
+    suggestionList = document.getElementById("suggestionList");
+    remainingWords = document.getElementById("remainingWords");
+    useExtendedDict = document.getElementById("useExtendedDict");
+    extendedDictStatus = document.getElementById("extendedDictStatus");
+    resetButton = document.getElementById("resetButton");
     slider.value = Math.log2(alpha_value);
     output.innerHTML = Math.pow(2, slider.value);
     slider.oninput = function() {
@@ -47,15 +68,25 @@ window.onload = function () {
     button.onclick = function() {
         updateSuggestion = true;
     }
+    solverMode.onchange = function() {
+        heuristicControls.hidden = solverMode.value === "entropy";
+        updateSuggestion = true;
+    }
+    useExtendedDict.onchange = function() {
+        updateSuggestion = true;
+    }
+    resetButton.onclick = resetBoard;
+    heuristicControls.hidden = solverMode.value === "entropy";
+    readExtendedDict();
     updateSuggestion = true;
 }
 
 var cnv;
 function setup() {
   // put setup code here
-  sizeScale = Math.min(2.0, 1.0 * (windowWidth / 1200));
-  cnv = createCanvas(windowWidth-20, (y0 + (dy+gap)*6 + dy) * sizeScale + ((dykey+gap)*3 + dykey) * sizeScale);
-//   var x = (windowWidth - width) / 2;
+  updateLayoutScale();
+  cnv = createCanvas(canvasWidth(), canvasHeight());
+//   var x = (window.innerWidth - width) / 2;
 //   var p = cnv.position();
 //   cnv.position(x, p.y);
   cnv.parent('sketch-holder');
@@ -63,8 +94,66 @@ function setup() {
 }
 
 function windowResized() {
-    sizeScale = Math.min(2.0, 1.0 * (windowWidth / 1200));
-    resizeCanvas(windowWidth-20, (y0 + (dy+gap)*6 + dy) * sizeScale + (y0 + (dykey+gap)*3 + dy) * sizeScale);
+    updateLayoutScale();
+    resizeCanvas(canvasWidth(), canvasHeight());
+}
+
+function updateLayoutScale() {
+    const viewport = viewportWidth();
+    if (isCompactLayout()) {
+        // The board uses most of a phone's width. The wider ten-key row spans
+        // the canvas independently, giving its touch targets more room.
+        sizeScale = Math.min(1.0, viewport / 400);
+        const availableKeyboardWidth = viewport - 24;
+        keyboardSizeScale = Math.min(1.0, availableKeyboardWidth / (dxkey * 10 + gap * 9));
+    }
+    else {
+        sizeScale = Math.min(2.0, viewport / 1200);
+        // Make the desktop keyboard a supporting element rather than the
+        // dominant part of the canvas.
+        keyboardSizeScale = sizeScale * 0.8;
+    }
+}
+
+function canvasWidth() {
+    if (isCompactLayout()) {
+        return viewportWidth() - 20;
+    }
+    const keyboardRightEdge = keyboardLeftEdge() + (dxkey * 10 + gap * 9) * keyboardSizeScale;
+    return Math.min(viewportWidth() - 20, keyboardRightEdge + 32);
+}
+
+function canvasHeight() {
+    return keyboardTop() + (dykey * 3 + gap * 2) * keyboardSizeScale + 60 * sizeScale;
+}
+
+function keyboardTop() {
+    return (y0 + (dy + gap) * 5 + y0) * sizeScale;
+}
+
+function keyboardLeftOffset() {
+    return isCompactLayout() ? 0 : -20 * keyboardSizeScale;
+}
+
+function keyboardLeftEdge() {
+    return isCompactLayout() ? 2 : lpad + x0 * sizeScale + keyboardLeftOffset();
+}
+
+function viewportWidth() {
+    return document.documentElement.clientWidth;
+}
+
+function isCompactLayout() {
+    return window.matchMedia("(max-width: 800px)").matches;
+}
+
+function keyboardKeyX(row, column) {
+    const rowIndent = row > 0 ? dxkey * 0.5 * keyboardSizeScale : 0;
+    return keyboardLeftEdge() + rowIndent + (dxkey + gap) * column * keyboardSizeScale;
+}
+
+function keyboardKeyY(row) {
+    return keyboardTop() + (dykey + gap) * row * keyboardSizeScale;
 }
 
 function word_score(word,word_bank) {
@@ -99,20 +188,75 @@ function word_score(word,word_bank) {
     return score;
 }
 
-function rank_guesses(word_bank,N,strategy) {
+function rank_guesses(guess_bank, answer_bank, N, strategy) {
     // Generate a list of words with their associated scores
     const guess_scores = [];
-    for (let i=0; i<word_bank.length; i++) {
-        const word = word_bank[i];
-        guess_scores.push([word,word_score(word,word_bank)]);
+    for (let i=0; i<guess_bank.length; i++) {
+        const word = guess_bank[i];
+        guess_scores.push([word,word_score(word,answer_bank)]);
     }
     // Sort scores per strategy
     function sortby(a,b) {
         return b[1][0]*strategy[0] + b[1][1]*strategy[1] - a[1][0]*strategy[0] - a[1][1]*strategy[1];
     }
     guess_scores.sort(sortby);
-    const res = guess_scores.slice(0, Math.min(N, word_bank.length));
+    const res = guess_scores.slice(0, Math.min(N, guess_bank.length));
     return res;
+}
+
+// Return the feedback a guess would receive if `answer` were the solution.
+// Encoding grey, yellow, and green as 0, 1, and 2 respectively makes each
+// possible feedback result a convenient key for an entropy bucket.
+function feedback_pattern(guess, answer) {
+    const feedback = [0, 0, 0, 0, 0];
+    const remainingLetters = {};
+
+    // Greens are assigned first. This is important for words with repeated
+    // letters: only unmatched answer letters can subsequently become yellow.
+    for (let i = 0; i < 5; i++) {
+        if (guess[i] === answer[i]) {
+            feedback[i] = 2;
+        }
+        else {
+            remainingLetters[answer[i]] = (remainingLetters[answer[i]] || 0) + 1;
+        }
+    }
+
+    for (let i = 0; i < 5; i++) {
+        if (feedback[i] === 0 && remainingLetters[guess[i]] > 0) {
+            feedback[i] = 1;
+            remainingLetters[guess[i]] -= 1;
+        }
+    }
+    return feedback.join('');
+}
+
+function entropy_score(guess, answer_bank) {
+    const patternCounts = {};
+
+    for (let i = 0; i < answer_bank.length; i++) {
+        const pattern = feedback_pattern(guess, answer_bank[i]);
+        patternCounts[pattern] = (patternCounts[pattern] || 0) + 1;
+    }
+
+    let entropy = 0;
+    for (const pattern in patternCounts) {
+        const probability = patternCounts[pattern] / answer_bank.length;
+        entropy -= probability * Math.log2(probability);
+    }
+    return entropy;
+}
+
+function rank_entropy_guesses(guess_bank, answer_bank, N) {
+    const guessScores = [];
+    for (let i = 0; i < guess_bank.length; i++) {
+        const word = guess_bank[i];
+        guessScores.push([word, entropy_score(word, answer_bank)]);
+    }
+    guessScores.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+    return guessScores.slice(0, Math.min(N, guess_bank.length));
 }
 
 function readDict() {
@@ -120,7 +264,36 @@ function readDict() {
     var txtFile = new XMLHttpRequest();
     txtFile.open("GET", "https://raw.githubusercontent.com/fbelik/Wordle/main/wordledict.csv", true);
     txtFile.onreadystatechange = function() {
-        fullDict = txtFile.responseText.split(/,\n|\n/).slice(1);
+        fullDict = txtFile.responseText
+            .split(/,\n|\n/)
+            .slice(1)
+            .filter(word => word.length === 5);
+    };
+    txtFile.send();
+}
+
+function readExtendedDict() {
+    var txtFile = new XMLHttpRequest();
+    // txtFile.open("GET", "extendeddict.csv", true);
+    txtFile.open("GET", "https://raw.githubusercontent.com/fbelik/Wordle/main/extendeddict.csv", true);
+    txtFile.onreadystatechange = function() {
+        if (txtFile.readyState === 4) {
+            if (txtFile.status === 200) {
+                extendedDict = txtFile.responseText
+                    .split(/\r?\n/)
+                    .map(word => word.trim().toLowerCase())
+                    .filter(word => /^[a-z]{5}$/.test(word));
+                extendedDictState = extendedDict.length > 0 ? "ready" : "error";
+            }
+            else {
+                extendedDictState = "error";
+            }
+            updateSuggestion = true;
+        }
+    };
+    txtFile.onerror = function() {
+        extendedDictState = "error";
+        updateSuggestion = true;
     };
     txtFile.send();
 }
@@ -208,8 +381,64 @@ function remove_from_list(word,res,word_list) {
     return new_list
 }
 
+function displayRankedGuesses(rankedGuesses, mode, dictionaryLabel) {
+    suggestionList.replaceChildren();
+    suggestionHeading.textContent = mode === "entropy"
+        ? "Top 20 by Shannon entropy"
+        : "Top 20 by expected greens/yellows";
+    if (dictionaryLabel) {
+        suggestionHeading.textContent += ` (${dictionaryLabel})`;
+    }
+
+    for (let i = 0; i < rankedGuesses.length; i++) {
+        const listItem = document.createElement("li");
+        const word = rankedGuesses[i][0].toUpperCase();
+        if (mode === "entropy") {
+            listItem.textContent = `${word} — ${rankedGuesses[i][1].toFixed(3)} bits`;
+        }
+        else {
+            const score = rankedGuesses[i][1];
+            listItem.textContent = `${word} — ${score[0].toFixed(3)} greens, ${score[1].toFixed(3)} yellows`;
+        }
+        suggestionList.appendChild(listItem);
+    }
+}
+
+function updateExtendedDictionaryControl(completedGuesses, extendedCandidates) {
+    useExtendedDict.checked = useExtendedDict.checked && extendedCandidates.length <= EXTENDED_DICT_THRESHOLD;
+
+    if (extendedDictState === "error") {
+        useExtendedDict.checked = false;
+        useExtendedDict.disabled = true;
+        extendedDictStatus.textContent = `Expanded dictionary could not be loaded.`;
+    }
+    else if (completedGuesses === 0) {
+        useExtendedDict.checked = false;
+        useExtendedDict.disabled = true;
+        extendedDictStatus.textContent = `Expanded dictionary becomes available after the first completed guess.`;
+    }
+    else if (extendedDictState === "loading") {
+        useExtendedDict.checked = false;
+        useExtendedDict.disabled = true;
+        extendedDictStatus.textContent = `Loading expanded dictionary…`;
+    }
+    else if (extendedCandidates.length === 0) {
+        useExtendedDict.checked = false;
+        useExtendedDict.disabled = true;
+        extendedDictStatus.textContent = `No expanded candidates match the entered feedback.`;
+    }
+    else if (extendedCandidates.length > EXTENDED_DICT_THRESHOLD) {
+        useExtendedDict.checked = false;
+        useExtendedDict.disabled = true;
+        extendedDictStatus.textContent = `${extendedCandidates.length} expanded candidates remain. Available at ${EXTENDED_DICT_THRESHOLD} or fewer.`;
+    }
+    else {
+        useExtendedDict.disabled = false;
+        extendedDictStatus.textContent = `${extendedCandidates.length} expanded candidates remain. You can now switch dictionaries.`;
+    }
+}
+
 function updateSuggestions() {
-    suggestions = "";
     var word_dict = fullDict;
     var guess = 1;
     won = false;
@@ -218,34 +447,82 @@ function updateSuggestions() {
         const word = chars[i].join('').toLowerCase();
         const res = states[i];
         if (res[0] == 2 && res[1] == 2 && res[2] == 2 && res[3] == 2 && res[4] == 2) {
-            suggestions = `Won in ${guess} guesses!\n`;
             won = true;
         }
         word_dict = remove_from_list(word,res,word_dict);
         guess += 1;
-    }
+	}
 	if (!won) {
+		const completedGuessCount = guess - 1;
+		let extendedCandidates = [];
+		if (completedGuessCount > 0 && extendedDict.length > 0) {
+			extendedCandidates = extendedDict;
+			for (var i=0; i<completedGuessCount; i++) {
+				extendedCandidates = remove_from_list(chars[i].join('').toLowerCase(), states[i], extendedCandidates);
+            }
+        }
+		updateExtendedDictionaryControl(completedGuessCount, extendedCandidates);
+		const usingExtendedDictionary = extendedDictState === "ready"
+			&& !useExtendedDict.disabled
+			&& useExtendedDict.checked
+			&& extendedCandidates.length > 0;
+		const activeDictionary = usingExtendedDictionary ? extendedCandidates : word_dict;
+		const dictionaryLabel = usingExtendedDictionary ? "expanded dictionary" : "original dictionary";
+		const completedGuesses = [];
 		for (var i=0; i<guess-1; i++) {
-			suggestions = suggestions + `Guess ${i+1}: ${chars[i].join('')}\n`;
+			completedGuesses.push(`Guess ${i+1}: ${chars[i].join('')}`);
         }
-		suggestions = suggestions + `You are on guess ${guess}\n`;
-		rg = rank_guesses(word_dict,5,[alpha_value,1]);
-		suggestions = suggestions + `The top guesses with given strategy are:\n`;
-		for (var j=0; j<rg.length; j++) {
-			suggestions = suggestions + `   ${rg[j][0].toUpperCase()} with ${rg[j][1][0].toFixed(3)} greens, ${rg[j][1][1].toFixed(3)} yellows expected\n`;
-        }
-		suggestions = suggestions + `There are ${word_dict.length} possible words remaining\n`;
+		gameStatus.textContent = `${completedGuesses.join("\n")}${completedGuesses.length ? "\n" : ""}You are on guess ${guess}.`;
+		if (solverMode.value === "entropy") {
+			displayRankedGuesses(rank_entropy_guesses(activeDictionary, activeDictionary, 20), "entropy", dictionaryLabel);
+		}
+		else {
+			displayRankedGuesses(rank_guesses(activeDictionary, activeDictionary, 20, [alpha_value, 1]), "heuristic", dictionaryLabel);
+		}
+		remainingWords.textContent = `${activeDictionary.length} possible words remaining.`;
+    }
+    else {
+        gameStatus.textContent = `Won in ${guess - 1} guesses!`;
+        suggestionHeading.textContent = "Suggestions";
+        suggestionList.replaceChildren();
+        remainingWords.textContent = "";
     }
 }
 
-var keyboardKeys = [['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['->','Z','X','C','V','B','N','M','<-']];
+var keyboardKeys = [['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['→','Z','X','C','V','B','N','M','←']];
+
+function virtualKeyCode(key) {
+    if (key === '→') {
+        return 13; // Enter
+    }
+    if (key === '←') {
+        return 8; // Backspace
+    }
+    return key.charCodeAt(0);
+}
+
+function resetBoard() {
+    for (var i = 0; i < 6; i++) {
+        for (var j = 0; j < 5; j++) {
+            chars[i][j] = "";
+            states[i][j] = 0;
+        }
+    }
+    boxOn = 0;
+    waitEnter = false;
+    updateSuggestion = true;
+    won = false;
+}
 
 function draw() {
   // put drawing code
   background(25, 25, 25);
   textSize(25 * sizeScale);
   fill(240,237,215);
-  text('Wordle Bot', lpad + 120 * sizeScale, 50 * sizeScale);
+  textAlign(CENTER, BASELINE);
+  //text('Wordle Bot', lpad + (x0 + (dx + gap) * 2 + dx / 2) * sizeScale, 50 * sizeScale);
+  text('Wordle Bot', lpad + (x0 + (dx + gap) * 2 + dx / 2) * sizeScale, 50 * sizeScale);
+  textAlign(LEFT, BASELINE);
   // Draw rectangles
   for (var i=0; i<6; i++) {
     for (var j=0; j<5; j++) {
@@ -265,39 +542,23 @@ function draw() {
   }
   // Draw keyboard
   //   textSize(18 * sizeScale);
-  var keyIndentx = 0;
+  textSize(25 * keyboardSizeScale);
   for (var i=0; i<3; i++) {
     var j = 0;
     for (var j=0; j<keyboardKeys[i].length; j++) {
-        if (i > 0) {
-            keyIndentx = dxkey * 1/2 * sizeScale;
-        }
-        else {
-            keyIndentx = 0;
-        }
         fill(200,200,200);
-        rect(keyIndentx + lpad + (x0 + (dxkey+gap)*j) * sizeScale, (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i) * sizeScale, dxkey * sizeScale, dykey * sizeScale);
+        rect(keyboardKeyX(i, j), keyboardKeyY(i), dxkey * keyboardSizeScale, dykey * keyboardSizeScale);
         fill(0,0,0);
-        text(keyboardKeys[i][j], keyIndentx + lpad + (18 + x0 + (dxkey+gap)*j) * sizeScale, (0 + y0 + (dy+gap)*6) * sizeScale + (80 + (dykey+gap)*i) * sizeScale);
+        text(keyboardKeys[i][j], keyboardKeyX(i, j) + 18 * keyboardSizeScale, keyboardKeyY(i) + 35 * keyboardSizeScale);
     }
   }
   if (fullDict.length == 0) {
     readDict();
   }
-  if (updateSuggestion && fullDict.length > 0 && suggestions != "LOADING") {
-    suggestions = "LOADING";
-  }
-  else if (updateSuggestion && fullDict.length > 0) {
-    suggestions = "LOADING";
-    textSize(20 * sizeScale);
-    fill(240,237,215);
-    text(suggestions, lpad + 350 * sizeScale, 50 * sizeScale);
+  if (updateSuggestion && fullDict.length > 0) {
     updateSuggestion = false;
     updateSuggestions();
   }
-  textSize(20 * sizeScale);
-  fill(240,237,215);
-  text(suggestions, lpad + 350 * sizeScale, 110 * sizeScale);
 }
 
 function myKeyPressed(keyCode) {
@@ -336,16 +597,7 @@ function myKeyPressed(keyCode) {
         }
     }
     else if (keyCode == 46) { // DELETE
-        for (var i=0; i<6; i++) {
-            for (var j=0; j<5; j++) {
-                chars[i][j] = "";
-                states[i][j] = 0;
-            }
-        }
-        boxOn = 0;
-        waitEnter = false;
-        updateSuggestion = true;
-        won = false;
+        resetBoard();
     }
     else if (keyCode >= 49 && keyCode <= 53 && !won) { // 1-5
         var i = floor(boxOn/5);
@@ -377,17 +629,11 @@ function mouseReleased() {
                 }
             }
         }
-        var keyIndentx = 0;
         for (var i = 0; i < 3; i++) {
-            if (i > 0) {
-                keyIndentx = dxkey * 1/2 * sizeScale;
-            }
-            else {
-                keyIndentx = 0;
-            }
             for (var j = 0; j < keyboardKeys[i].length; j++) {
-                if (mouseX >= keyIndentx + lpad + (x0 + (dxkey+gap)*j) * sizeScale && mouseX <= keyIndentx + lpad + (x0 + (dxkey+gap)*j + dxkey) * sizeScale && mouseY >= (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i) * sizeScale && mouseY <= (y0 + (dy+gap)*5) * sizeScale + (y0 + (dykey+gap)*i + dykey) * sizeScale) {                        dispatchEvent(new KeyboardEvent('keypress', {'key': keyboardKeys[i][j]}));
-                    myKeyPressed((keyboardKeys[i][j]).charCodeAt(0));
+                if (mouseX >= keyboardKeyX(i, j) && mouseX <= keyboardKeyX(i, j) + dxkey * keyboardSizeScale && mouseY >= keyboardKeyY(i) && mouseY <= keyboardKeyY(i) + dykey * keyboardSizeScale) {
+                    // dispatchEvent(new KeyboardEvent('keypress', {'key': keyboardKeys[i][j]}));
+                    myKeyPressed(virtualKeyCode(keyboardKeys[i][j]));
                     break;
                 }
             }

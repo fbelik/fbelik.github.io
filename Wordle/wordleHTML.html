@@ -1,25 +1,53 @@
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.min.js"></script>
   </head>
   <body>
     <script src="wordle.js"></script>
-    <p>Wordle strategy slider</p>
-    <div class="slidecontainer">
-        <input type="range" value="0" min="-3" max="4" step="0.001" class="slider" id="myRange">
+    <label for="solverMode">Solver:</label>
+    <select id="solverMode">
+      <option value="heuristic">Expected greens/yellows</option>
+      <option value="entropy">Shannon entropy</option>
+    </select>
+    <!-- <p>Entropy chooses guesses that most evenly split the remaining answers by their possible Wordle feedback patterns.</p> -->
+    <p>Instructions: As you make guesses, enter the word you guessed along with clicking (or pressing 1-5) to highlight the characters yellow or green.</p>
+    <p>You will then be provided with a list of suggested next guesses.</p>
+    <p>Note this the tool first searches through a list of 2,317 words. If the word is not found there, an additional dictionary can be used by checking "Use expanded dictionary."</p>
+    <p>Solver options are a heuristic of maximizing the sum of alpha times expected greens plus expected yellows, or an entropy approach.</p>
+    <div id="heuristicControls">
+      <p>Wordle strategy slider</p>
+      <div class="slidecontainer">
+          <input type="range" value="0" min="-3" max="4" step="0.001" class="slider" id="myRange">
+      </div>
+      <input type="button" value="Enter" id="sliderButton">
+      <p>Slider: α = <span id="sliderText"></span></p>
+      <p>Change the value of the slider to change how strongly you value greens over yellows.</p>
     </div>
-    <input type="button" value="Enter" id="sliderButton">
-    <p>Slider: α = <span id="sliderText"></span></p>
-    <p>Change the value of the slider to change how strongly you value greens over yellows</p>
-    <p>Instructions: As you make guesses, enter the word you guessed along with clicking (or pressing 1-5) to highlight the characters yellow or green. You will then be provided with a top five list of suggested next guesses. Note this tool no longer contains all possible wordle words.</p>
-    <br>
-    <div id="sketch-holder">
-        <!-- Our sketch will go here! -->
+    <div id="extendedDictionaryControls">
+      <label class="toggleLabel">
+        <input type="checkbox" id="useExtendedDict" class="toggleInput" disabled>
+        <span class="toggleTrack" aria-hidden="true"></span>
+        Use expanded dictionary
+      </label>
+      <p id="extendedDictStatus">Loading expanded dictionary…</p>
     </div>
-    <p>Wordle fun facts: (<a href="https://photutorial.com/wordle-statistics/"  target="_blank" rel="noopener noreferrer">Photutorial wordle statistics 2023</a>)</p>
+    <div id="gameActions">
+      <button type="button" id="resetButton">Reset board</button>
+    </div>
+    <div id="gameArea">
+      <div id="sketch-holder">
+          <!-- The p5 board and keyboard go here. -->
+      </div>
+      <section id="suggestionsPanel" aria-live="polite">
+        <h2 id="suggestionHeading">Suggestions</h2>
+        <h3 id="gameStatus">Loading words…</h3>
+        <h3 id="remainingWords"></h3>
+        <ol id="suggestionList" style="font-size: 18px;"></ol>
+      </section>
+    </div>
+    <!-- <p>Wordle fun facts: (<a href="https://photutorial.com/wordle-statistics/"  target="_blank" rel="noopener noreferrer">Photutorial wordle statistics 2023</a>)</p>
     <ul>
         <li>Global average is 4.016 guesses to solve</li>
         <li>Top country is Sweden with 3.72 guesses to solve</li>
@@ -29,6 +57,6 @@
     </ul>
     <p>Strategy charts</p>
     <img src="wordle_strategy_sweep.png" width="45%">
-    <img src="wordle_first_guess.png" width="45%">
+    <img src="wordle_first_guess.png" width="45%"> -->
   </body>
 </html>
