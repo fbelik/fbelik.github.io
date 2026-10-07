@@ -49,6 +49,11 @@
   line-height: 0;
 }
 
+#sketch-holder canvas {
+  /* Keep taps available to p5 while allowing a vertical drag to scroll the page. */
+  touch-action: pan-y;
+}
+
 #suggestionsPanel {
   box-sizing: border-box;
   display: flex;
