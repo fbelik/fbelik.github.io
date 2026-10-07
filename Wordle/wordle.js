@@ -262,7 +262,7 @@ function rank_entropy_guesses(guess_bank, answer_bank, N) {
 function readDict() {
     fullDict = [];
     var txtFile = new XMLHttpRequest();
-    txtFile.open("GET", "https://raw.githubusercontent.com/fbelik/Wordle/main/wordledict.csv", true);
+    txtFile.open("GET", "https://raw.githubusercontent.com/fbelik/fbelik.github.io/refs/heads/main/Wordle/wordledict.csv", true);
     txtFile.onreadystatechange = function() {
         fullDict = txtFile.responseText
             .split(/,\n|\n/)
@@ -275,7 +275,7 @@ function readDict() {
 function readExtendedDict() {
     var txtFile = new XMLHttpRequest();
     // txtFile.open("GET", "extendeddict.csv", true);
-    txtFile.open("GET", "https://raw.githubusercontent.com/fbelik/Wordle/main/extendeddict.csv", true);
+    txtFile.open("GET", "https://raw.githubusercontent.com/fbelik/fbelik.github.io/refs/heads/main/Wordle/extendeddict.csv", true);
     txtFile.onreadystatechange = function() {
         if (txtFile.readyState === 4) {
             if (txtFile.status === 200) {
