@@ -51,7 +51,7 @@
 
 #sketch-holder canvas {
   /* Keep taps available to p5 while allowing a vertical drag to scroll the page. */
-  touch-action: pan-y;
+  touch-action: pan-y !important;
 }
 
 #suggestionsPanel {

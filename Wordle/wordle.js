@@ -616,7 +616,7 @@ function keyPressed() {
     myKeyPressed(keyCode);
 }
 
-function mouseReleased() {
+function mouseClicked() {
     if (!won) {
         for (var i=0; i<6; i++) {
             for (var j=0; j<5; j++) {
@@ -632,11 +632,13 @@ function mouseReleased() {
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < keyboardKeys[i].length; j++) {
                 if (mouseX >= keyboardKeyX(i, j) && mouseX <= keyboardKeyX(i, j) + dxkey * keyboardSizeScale && mouseY >= keyboardKeyY(i) && mouseY <= keyboardKeyY(i) + dykey * keyboardSizeScale) {
-                    // dispatchEvent(new KeyboardEvent('keypress', {'key': keyboardKeys[i][j]}));
                     myKeyPressed(virtualKeyCode(keyboardKeys[i][j]));
                     break;
                 }
             }
         }
     }
+    return true;
 }
+
+function touchMoved() { return true; }
