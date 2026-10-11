@@ -50,8 +50,9 @@
 }
 
 #sketch-holder canvas {
-  /* Keep taps available to p5 while allowing a vertical drag to scroll the page. */
-  touch-action: pan-y !important;
+  /* Allow scrolling but disable double-tap-to-zoom, so quick repeated taps are
+     delivered as separate taps. iOS Safari ignores pan-y, but supports manipulation. */
+  touch-action: manipulation !important;
 }
 
 #suggestionsPanel {

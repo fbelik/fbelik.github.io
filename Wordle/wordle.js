@@ -8,11 +8,12 @@ var won = false;
 const lpad = 0;
 const x0 = 50;
 const dx = 50;
-const y0 = 100;
+const y0 = 60;
 const dy = 50;
 const gap = 5;
 const dxkey = 50;
 const dykey = 50;
+const DESKTOP_SUGGESTIONS_HEIGHT = 700;
 
 
 const chars = [];
@@ -45,6 +46,9 @@ var remainingWords;
 var useExtendedDict;
 var extendedDictStatus;
 var resetButton;
+var pointerDownX = 0;
+var pointerDownY = 0;
+var pointerDownOnCanvas = false;
 
 window.onload = function () {
     slider = document.getElementById("myRange");
@@ -124,7 +128,8 @@ function canvasWidth() {
 }
 
 function canvasHeight() {
-    return keyboardTop() + (dykey * 3 + gap * 2) * keyboardSizeScale + 60 * sizeScale;
+    const compactHeight = keyboardTop() + (dykey * 3 + gap * 2) * keyboardSizeScale + 10 * sizeScale;
+    return isCompactLayout() ? compactHeight : Math.max(compactHeight, DESKTOP_SUGGESTIONS_HEIGHT);
 }
 
 function keyboardTop() {
@@ -521,7 +526,7 @@ function draw() {
   fill(240,237,215);
   textAlign(CENTER, BASELINE);
   //text('Wordle Bot', lpad + (x0 + (dx + gap) * 2 + dx / 2) * sizeScale, 50 * sizeScale);
-  text('Wordle Bot', lpad + (x0 + (dx + gap) * 2 + dx / 2) * sizeScale, 50 * sizeScale);
+  text('Wordle Bot', lpad + (x0 + (dx + gap) * 2 + dx / 2) * sizeScale, 35 * sizeScale);
   textAlign(LEFT, BASELINE);
   // Draw rectangles
   for (var i=0; i<6; i++) {
@@ -616,11 +621,11 @@ function keyPressed() {
     myKeyPressed(keyCode);
 }
 
-function mouseClicked() {
+function handleCanvasTap(pointerX, pointerY) {
     if (!won) {
         for (var i=0; i<6; i++) {
             for (var j=0; j<5; j++) {
-                if (mouseX >= lpad + (x0 + (dx+gap)*j)*sizeScale && mouseX <= lpad + (x0 + (dx+gap)*j + dx)*sizeScale && mouseY >= (y0 + (dy+gap)*i)*sizeScale && mouseY <= (y0 + (dy+gap)*i + dy)*sizeScale) {
+                if (pointerX >= lpad + (x0 + (dx+gap)*j)*sizeScale && pointerX <= lpad + (x0 + (dx+gap)*j + dx)*sizeScale && pointerY >= (y0 + (dy+gap)*i)*sizeScale && pointerY <= (y0 + (dy+gap)*i + dy)*sizeScale) {
                     if ((floor(boxOn / 5) == i || (floor(boxOn / 5) == i+1 && boxOn % 5 == 0 && waitEnter)) && chars[i][j] != "") { // Right column and nonempty
                         // Change color
                         states[i][j] = (states[i][j] + 1) % 3;
@@ -631,7 +636,7 @@ function mouseClicked() {
         }
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < keyboardKeys[i].length; j++) {
-                if (mouseX >= keyboardKeyX(i, j) && mouseX <= keyboardKeyX(i, j) + dxkey * keyboardSizeScale && mouseY >= keyboardKeyY(i) && mouseY <= keyboardKeyY(i) + dykey * keyboardSizeScale) {
+                if (pointerX >= keyboardKeyX(i, j) && pointerX <= keyboardKeyX(i, j) + dxkey * keyboardSizeScale && pointerY >= keyboardKeyY(i) && pointerY <= keyboardKeyY(i) + dykey * keyboardSizeScale) {
                     myKeyPressed(virtualKeyCode(keyboardKeys[i][j]));
                     break;
                 }
@@ -641,4 +646,22 @@ function mouseClicked() {
     return true;
 }
 
-function touchMoved() { return true; }
+// p5 2.x drives mousePressed/mouseReleased from pointer events for mouse, pen
+// and touch alike (touchStarted/touchEnded are never called). Handling the tap
+// on pointerup instead of click means rapid repeated taps are never merged
+// into a double-click, and a drag that becomes a scroll ends in pointercancel
+// rather than pointerup, so it is never treated as a tap.
+function mousePressed(e) {
+    pointerDownOnCanvas = e.target === cnv.elt && (e.pointerType !== "mouse" || e.button === 0);
+    pointerDownX = mouseX;
+    pointerDownY = mouseY;
+    return true;
+}
+
+function mouseReleased(e) {
+    if (pointerDownOnCanvas && e.target === cnv.elt && Math.abs(mouseX - pointerDownX) <= 10 && Math.abs(mouseY - pointerDownY) <= 10) {
+        handleCanvasTap(mouseX, mouseY);
+    }
+    pointerDownOnCanvas = false;
+    return true;
+}
