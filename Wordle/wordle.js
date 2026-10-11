@@ -32,7 +32,7 @@ var alpha_value = 2.8624;
 var fullDict = [];
 var extendedDict = [];
 var extendedDictState = "loading";
-const EXTENDED_DICT_THRESHOLD = 1000;
+const EXTENDED_DICT_THRESHOLD = 2316;
 
 var slider;
 var output;
